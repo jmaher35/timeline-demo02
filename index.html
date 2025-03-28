@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timeline Demo</title>
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --success-color: #28a745;
+            --pending-color: #ffc107;
+            --error-color: #dc3545;
+            --background-color: #f8f9fa;
+            --text-color: #333;
+            --spacing: 20px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            margin: 0;
+            padding: 40px;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
+        .timeline-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .timeline {
+            position: relative;
+            padding: var(--spacing) 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            height: 100%;
+            width: 2px;
+            background-color: var(--primary-color);
+        }
+
+        .timeline-step {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: var(--spacing) 0;
+            position: relative;
+        }
+
+        .step-marker {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            z-index: 1;
+        }
+
+        .step-content {
+            position: absolute;
+            width: 300px;
+            padding: var(--spacing);
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .step-content.left {
+            right: calc(50% + 45px);
+        }
+
+        .step-content.right {
+            left: calc(50% + 45px);
+        }
+
+        .status-card {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            background-color: var(--background-color);
+        }
+
+        .status {
+            font-weight: bold;
+        }
+
+        .status.pending { color: var(--pending-color); }
+        .status.completed { color: var(--success-color); }
+        .status.error { color: var(--error-color); }
+
+        .step-marker.pending { background-color: var(--pending-color); }
+        .step-marker.completed { background-color: var(--success-color); }
+        .step-marker.error { background-color: var(--error-color); }
+    </style>
+</head>
+<body>
+    <div class="timeline-container">
+        <h1>Project Timeline</h1>
+        <div class="timeline" id="timeline">
+            <!-- Timeline steps will be generated here -->
+        </div>
+    </div>
+
+    <script>
+        const statusData = [
+            {
+                step: 1,
+                title: "Project Initiation",
+                description: "Setting up project requirements and scope",
+                status: "completed",
+                date: "2024-03-28"
+            },
+            {
+                step: 2,
+                title: "Design Phase",
+                description: "Creating wireframes and design mockups",
+                status: "completed",
+                date: "2024-03-29"
+            },
+            {
+                step: 3,
+                title: "Development",
+                description: "Building the core functionality",
+                status: "pending",
+                date: "2024-03-30"
+            },
+            {
+                step: 4,
+                title: "Testing",
+                description: "Quality assurance and bug fixes",
+                status: "pending",
+                date: "2024-03-31"
+            }
+        ];
+
+        function createTimelineStep(data, index) {
+            const isEven = index % 2 === 0;
+            return `
+                <div class="timeline-step">
+                    <div class="step-marker ${data.status}">${data.step}</div>
+                    <div class="step-content ${isEven ? 'left' : 'right'}">
+                        <h3>${data.title}</h3>
+                        <p>${data.description}</p>
+                        <div class="status-card">
+                            <span class="status ${data.status}">${data.status.toUpperCase()}</span>
+                            <br>
+                            <small>Due: ${data.date}</small>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderTimeline() {
+            const timeline = document.getElementById('timeline');
+            timeline.innerHTML = statusData.map((data, index) => 
+                createTimelineStep(data, index)
+            ).join('');
+        }
+
+        // Initialize timeline
+        renderTimeline();
+    </script>
+</body>
+</html>
