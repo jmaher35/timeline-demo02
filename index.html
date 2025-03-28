@@ -4,171 +4,208 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Timeline Demo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #007bff;
-            --success-color: #28a745;
-            --pending-color: #ffc107;
-            --error-color: #dc3545;
-            --background-color: #f8f9fa;
+            --primary-color: #34A853;
+            --inactive-color: #E5E5E5;
+            --active-color: #4285F4;
             --text-color: #333;
             --spacing: 20px;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
             margin: 0;
             padding: 40px;
-            background-color: var(--background-color);
+            background-color: white;
             color: var(--text-color);
         }
 
         .timeline-container {
-            max-width: 800px;
+            max-width: 1200px;
             margin: 0 auto;
+        }
+
+        .timeline-title {
+            color: #6B4EFF;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 40px;
         }
 
         .timeline {
             position: relative;
             padding: var(--spacing) 0;
+            margin-bottom: 60px;
         }
 
-        .timeline::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            height: 100%;
-            width: 2px;
-            background-color: var(--primary-color);
-        }
-
-        .timeline-step {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: var(--spacing) 0;
+        .progress-bar {
+            height: 4px;
+            background-color: var(--inactive-color);
             position: relative;
+            margin: 40px 0;
+        }
+
+        .progress {
+            position: absolute;
+            height: 100%;
+            background-color: var(--primary-color);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .timeline-steps {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin-top: -42px;
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            flex: 1;
         }
 
         .step-marker {
-            width: 30px;
-            height: 30px;
+            width: 24px;
+            height: 24px;
             border-radius: 50%;
-            background-color: var(--primary-color);
+            background-color: white;
+            border: 2px solid var(--inactive-color);
             display: flex;
             justify-content: center;
             align-items: center;
-            color: white;
-            font-weight: bold;
-            z-index: 1;
+            position: relative;
+            z-index: 2;
+        }
+
+        .step.completed .step-marker {
+            border-color: var(--primary-color);
+            background-color: white;
+        }
+
+        .step.active .step-marker {
+            border-color: var(--active-color);
+            background-color: var(--active-color);
         }
 
         .step-content {
-            position: absolute;
-            width: 300px;
-            padding: var(--spacing);
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+            margin-top: 16px;
         }
 
-        .step-content.left {
-            right: calc(50% + 45px);
+        .step-title {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 4px;
         }
 
-        .step-content.right {
-            left: calc(50% + 45px);
+        .step.active .step-title {
+            color: var(--active-color);
         }
 
-        .status-card {
-            margin-top: 10px;
-            padding: 10px;
-            border-radius: 4px;
-            background-color: var(--background-color);
+        .info-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 1px solid #ccc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+            margin-top: 8px;
+            cursor: help;
         }
 
-        .status {
-            font-weight: bold;
+        .location-icon {
+            width: 12px;
+            height: 12px;
         }
-
-        .status.pending { color: var(--pending-color); }
-        .status.completed { color: var(--success-color); }
-        .status.error { color: var(--error-color); }
-
-        .step-marker.pending { background-color: var(--pending-color); }
-        .step-marker.completed { background-color: var(--success-color); }
-        .step-marker.error { background-color: var(--error-color); }
     </style>
 </head>
 <body>
     <div class="timeline-container">
-        <h1>Project Timeline</h1>
-        <div class="timeline" id="timeline">
-            <!-- Timeline steps will be generated here -->
+        <h1 class="timeline-title">Timeline</h1>
+        <div class="timeline">
+            <div class="progress-bar">
+                <div class="progress" id="progress"></div>
+            </div>
+            <div class="timeline-steps">
+                <div class="step completed" data-step="1">
+                    <div class="step-marker">
+                        <svg class="location-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="currentColor"/>
+                        </svg>
+                    </div>
+                    <div class="step-content">
+                        <div class="step-title">Takedown Request</div>
+                        <div class="info-icon">i</div>
+                    </div>
+                </div>
+                <div class="step completed" data-step="2">
+                    <div class="step-marker">
+                        <svg class="location-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="currentColor"/>
+                        </svg>
+                    </div>
+                    <div class="step-content">
+                        <div class="step-title">Takedown Submission</div>
+                        <div class="info-icon">i</div>
+                    </div>
+                </div>
+                <div class="step active" data-step="3">
+                    <div class="step-marker">
+                        <svg class="location-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="currentColor"/>
+                        </svg>
+                    </div>
+                    <div class="step-content">
+                        <div class="step-title">Takedown Monitoring</div>
+                        <div class="info-icon">i</div>
+                    </div>
+                </div>
+                <div class="step" data-step="4">
+                    <div class="step-marker">
+                        <svg class="location-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="currentColor"/>
+                        </svg>
+                    </div>
+                    <div class="step-content">
+                        <div class="step-title">Awaiting 3rd Party Response</div>
+                        <div class="info-icon">i</div>
+                    </div>
+                </div>
+                <div class="step" data-step="5">
+                    <div class="step-marker">
+                        <svg class="location-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="currentColor"/>
+                        </svg>
+                    </div>
+                    <div class="step-content">
+                        <div class="step-title">Final Review</div>
+                        <div class="info-icon">i</div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        const statusData = [
-            {
-                step: 1,
-                title: "Project Initiation",
-                description: "Setting up project requirements and scope",
-                status: "completed",
-                date: "2024-03-28"
-            },
-            {
-                step: 2,
-                title: "Design Phase",
-                description: "Creating wireframes and design mockups",
-                status: "completed",
-                date: "2024-03-29"
-            },
-            {
-                step: 3,
-                title: "Development",
-                description: "Building the core functionality",
-                status: "pending",
-                date: "2024-03-30"
-            },
-            {
-                step: 4,
-                title: "Testing",
-                description: "Quality assurance and bug fixes",
-                status: "pending",
-                date: "2024-03-31"
-            }
-        ];
-
-        function createTimelineStep(data, index) {
-            const isEven = index % 2 === 0;
-            return `
-                <div class="timeline-step">
-                    <div class="step-marker ${data.status}">${data.step}</div>
-                    <div class="step-content ${isEven ? 'left' : 'right'}">
-                        <h3>${data.title}</h3>
-                        <p>${data.description}</p>
-                        <div class="status-card">
-                            <span class="status ${data.status}">${data.status.toUpperCase()}</span>
-                            <br>
-                            <small>Due: ${data.date}</small>
-                        </div>
-                    </div>
-                </div>
-            `;
+        // Calculate and set progress based on completed steps
+        function updateProgress() {
+            const steps = document.querySelectorAll('.step');
+            const completedSteps = document.querySelectorAll('.step.completed').length;
+            const progress = document.getElementById('progress');
+            const progressPercentage = (completedSteps / (steps.length - 1)) * 100;
+            progress.style.width = `${progressPercentage}%`;
         }
 
-        function renderTimeline() {
-            const timeline = document.getElementById('timeline');
-            timeline.innerHTML = statusData.map((data, index) => 
-                createTimelineStep(data, index)
-            ).join('');
-        }
-
-        // Initialize timeline
-        renderTimeline();
+        // Initialize progress
+        document.addEventListener('DOMContentLoaded', updateProgress);
     </script>
 </body>
 </html>
